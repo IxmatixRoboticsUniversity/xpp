@@ -4,5 +4,6 @@
   <include file="$(find xpp_hyq)/launch/monoped.launch"></include>
   <include file="$(find xpp_hyq)/launch/biped.launch"></include>
   <include file="$(find xpp_hyq)/launch/hyq.launch"></include>
+  <include file="$(find xpp_hyq)/launch/goddard.launch"></include>
   
 </launch>
