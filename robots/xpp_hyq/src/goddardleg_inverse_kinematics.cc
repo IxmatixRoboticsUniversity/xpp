@@ -33,13 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <map>
 
 #include <xpp_states/cartesian_declarations.h>
-
+#include <iostream>
 
 namespace xpp {
 
 
 GoddardlegInverseKinematics::Vector3d
-GoddardlegInverseKinematics::GetJointAngles (const Vector3d& ee_pos_B, KneeBend bend) const
+GoddardlegInverseKinematics::GetJointAngles (const Vector3d& ee_pos_B, KneeBendSide bend, KneeBendSide side) const
 {
   double aiis_angle, femur_angle, tibia_angle, rotation_x;
 
@@ -50,6 +50,7 @@ GoddardlegInverseKinematics::GetJointAngles (const Vector3d& ee_pos_B, KneeBend 
   // and flip coordinate signs such that all computations can be done
   // for the front-left leg
   xr = ee_pos_B;
+
 
   // compute the HAA angle
   aiis_angle = atan2(xr[Y],-xr[Z]);
@@ -72,8 +73,8 @@ GoddardlegInverseKinematics::GetJointAngles (const Vector3d& ee_pos_B, KneeBend 
   double ll = length_shank;  // length of lower leg
   double alpha = atan2(xr[Z],-xr[X]);
 
-
   double some_random_value_for_beta = (pow(lu,2)+tmp1-pow(ll,2))/(2.*lu*sqrt(tmp1)); // this must be between -1 and 1
+
   if (some_random_value_for_beta > 1) {
     some_random_value_for_beta = 1;
   }
@@ -81,9 +82,8 @@ GoddardlegInverseKinematics::GetJointAngles (const Vector3d& ee_pos_B, KneeBend 
     some_random_value_for_beta = -1;
   }
   double beta = acos(some_random_value_for_beta);
-
   // compute Hip FE angle
-  femur_angle = alpha + beta + (40.0*M_PI/180.0);
+  femur_angle = alpha + beta + (12.48*M_PI/180.0);
 
 
   double some_random_value_for_gamma = (pow(ll,2)+pow(lu,2)-tmp1)/(2.*ll*lu);
@@ -97,30 +97,33 @@ GoddardlegInverseKinematics::GetJointAngles (const Vector3d& ee_pos_B, KneeBend 
   double gamma  = acos(some_random_value_for_gamma);
 
 
-  tibia_angle = (-100*M_PI/180.0) + gamma;
-
+  tibia_angle = -(100.58*M_PI/180.0) + gamma;
+  
   // forward knee bend
   EnforceLimits(aiis_angle, HAA);
   EnforceLimits(femur_angle, HFE);
   EnforceLimits(tibia_angle, KFE);
-  
-  if (bend==Forward)
-    return Vector3d(aiis_angle, femur_angle, tibia_angle);
-  else
-    return Vector3d(-aiis_angle, femur_angle, tibia_angle);
+  if (bend==Forward && side==Right)
+    aiis_angle=-aiis_angle;
+  if (bend==Backward && side==Right)
+    aiis_angle=-aiis_angle;
+    
+  // else
+    
+  return Vector3d(aiis_angle, femur_angle, tibia_angle);
 }
 
 void
 GoddardlegInverseKinematics::EnforceLimits (double& val, GoddardJointID joint) const
 {
   // totally exaggerated joint angle limits
-  const static double haa_min = -18.9;
-  const static double haa_max =  18.9;
+  const static double haa_min = -31.0;
+  const static double haa_max =  31.0;
 
-  const static double hfe_min = -60;
+  const static double hfe_min = -62.85;
   const static double hfe_max =  0.0;
 
-  const static double kfe_min = -57.8;
+  const static double kfe_min = -81.98;
   const static double kfe_max =  0;
 
   // reduced joint angles for optimization

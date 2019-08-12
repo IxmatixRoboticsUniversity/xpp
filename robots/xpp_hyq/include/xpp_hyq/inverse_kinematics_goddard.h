@@ -55,7 +55,10 @@ public:
   int GetEECount() const override { return 4; };
 
 private:
-  Vector3d base2hip_LF_ = Vector3d(0.07797 + 0.25, 0.22571 + (0.2*0.4-0.2*0.06), 0.021643 + 0.5*0.1);
+  Vector3d base2hip_LF_ = Vector3d(0.0 + 0.25, 0.22628 + (0.2*0.4-0.2*0.06), 0.045145 + 0.5*0.1);
+  Vector3d base2hip_RF_ = Vector3d(0.0 + 0.25, 0.22628 + (0.2*0.4-0.2*0.06), 0.045145 + 0.5*0.1);
+  Vector3d base2hip_LH_ = Vector3d(0.0 - 0.25, 0.22628 + (0.2*0.4-0.2*0.06), 0.045145 + 0.5*0.1);
+  Vector3d base2hip_RH_ = Vector3d(0.0 - 0.25, 0.22628 + (0.2*0.4-0.2*0.06), 0.045145 + 0.5*0.1);
   GoddardlegInverseKinematics leg;
 };
 

@@ -46,30 +46,41 @@ InverseKinematicsGoddard::GetAllJointAngles(const EndeffectorsPos& x_B) const
 
   for (int ee=0; ee<pos_B.size(); ++ee) {
 
-    GoddardlegInverseKinematics::KneeBend bend = GoddardlegInverseKinematics::Forward;
+    GoddardlegInverseKinematics::KneeBendSide bend = GoddardlegInverseKinematics::Forward;
+    GoddardlegInverseKinematics::KneeBendSide side = GoddardlegInverseKinematics::Left;
 
     using namespace quad;
     switch (ee) {
       case LF:
         ee_pos_H = pos_B.at(ee).cwiseProduct(Eigen::Vector3d(1,1,1));
+        ee_pos_H -= base2hip_LF_;
+        bend = GoddardlegInverseKinematics::Forward;
+        side = GoddardlegInverseKinematics::Left;
         break;
       case RF:
         ee_pos_H = pos_B.at(ee).cwiseProduct(Eigen::Vector3d(1,-1,1));
-        bend = GoddardlegInverseKinematics::Backward;
+        ee_pos_H -= base2hip_RF_;
+        bend = GoddardlegInverseKinematics::Forward;
+        side = GoddardlegInverseKinematics::Right;
         break;
       case LH:
         ee_pos_H = pos_B.at(ee).cwiseProduct(Eigen::Vector3d(1,1,1));
+        ee_pos_H -= base2hip_LH_;
+        bend = GoddardlegInverseKinematics::Backward;
+        side = GoddardlegInverseKinematics::Left;
         break;
       case RH:
         ee_pos_H = pos_B.at(ee).cwiseProduct(Eigen::Vector3d(1,-1,1));
+        ee_pos_H -= base2hip_RH_;
         bend = GoddardlegInverseKinematics::Backward;
+        side = GoddardlegInverseKinematics::Right;
         break;
       default: // joint angles for this foot do not exist
         break;
     }
 
-    ee_pos_H -= base2hip_LF_;
-    q_vec.push_back(leg.GetJointAngles(ee_pos_H, bend));
+    // ee_pos_H -= base2hip_LF_;
+    q_vec.push_back(leg.GetJointAngles(ee_pos_H, bend, side));
   }
 
   return Joints(q_vec);

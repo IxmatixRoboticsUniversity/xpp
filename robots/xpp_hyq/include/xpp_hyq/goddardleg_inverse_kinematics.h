@@ -42,7 +42,7 @@ enum GoddardJointID {HAA=0, HFE, KFE, GoddardlegJointCount};
 class GoddardlegInverseKinematics {
 public:
   using Vector3d = Eigen::Vector3d;
-  enum KneeBend { Forward, Backward };
+  enum KneeBendSide { Forward, Backward, Left, Right };
 
   /**
    * @brief Default c'tor initializing leg lengths with standard values.
@@ -55,7 +55,7 @@ public:
    * @param ee_pos_H  Foot position xyz expressed in the frame attached
    * at the hip-aa (H).
    */
-  Vector3d GetJointAngles(const Vector3d& ee_pos_H, KneeBend bend=Forward) const;
+  Vector3d GetJointAngles(const Vector3d& ee_pos_H, KneeBendSide bend=Forward, KneeBendSide side=Left) const;
 
   /**
    * @brief Restricts the joint angles to lie inside the feasible range
@@ -66,7 +66,7 @@ public:
   void EnforceLimits(double& q, GoddardJointID joint) const;
 
 private:
-  Vector3d hfe_to_haa_z = Vector3d(-0.078965, 0.0, -0.07688); //distance of HFE to HAA in z direction
+  Vector3d hfe_to_haa_z = Vector3d(-0.18237, 0.0, -0.1279); //distance of HFE to HAA in z direction
   double length_thigh = 0.37386; // length of upper leg
   double length_shank = 0.43616; // length of lower leg
 };
